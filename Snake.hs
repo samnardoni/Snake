@@ -26,9 +26,7 @@ main = do
 	(progName,_) <- getArgsAndInitialize
 	initialDisplayMode $= [DoubleBuffered]
 	createWindow "Snake"
-
 	state <- mkState
-
 	idleCallback $= Just (idle state)
 	displayCallback $= (display state)
 	keyboardMouseCallback $= Just (keyboard state)
@@ -39,10 +37,8 @@ display :: State -> IO ()
 display state = do 
 	clear [ColorBuffer]
 	loadIdentity
-	--scale 1 1 (1::GLfloat)
 	snakeCoords <- get (stSnake state)
 	mapM_ displaySnakeCoord snakeCoords
-
 	swapBuffers
 
 displaySnakeCoord :: Coord -> IO ()
@@ -50,11 +46,11 @@ displaySnakeCoord (x,y) = preservingMatrix $ do
 	translate $ Vector3 xx yy (0::GLfloat)
 	color $ Color3 ((xx+1)/2) ((yy+1)/2) (1::GLfloat)
 	cube (1/bpw::GLfloat)
-		where
-			bpw = 20
-			scale = (\a -> (-1.0) + ((a/bpw) * 2) + 1/(bpw*2/2))
-			xx = scale $ fromIntegral x
-			yy = scale $ fromIntegral y
+	where
+		bpw = 20
+		scale = (\a -> (-1.0) + ((a/bpw) * 2) + 1/(bpw*2/2))
+		xx = scale $ fromIntegral x
+		yy = scale $ fromIntegral y
 
 
 idle :: State -> IO ()
@@ -64,9 +60,9 @@ idle state = do
 	updateSnake state x y
 	postRedisplay Nothing
 	threadDelay delay
-		where
-			mps = 10
-			delay = 1000000 `div` mps
+	where
+		mps = 10
+		delay = 1000000 `div` mps
 
 -- This should use Data.Sequence or Data.Deque
 updateSnake :: State -> Int -> Int -> IO ()
