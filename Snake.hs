@@ -67,10 +67,13 @@ idle state = do
 -- This should use Data.Sequence or Data.Deque
 updateSnake :: State -> Int -> Int -> IO ()
 updateSnake state dx dy = do
-	let snake = stSnake state
-	coords <- get snake
-	let ((lx,ly):_) = coords
-	snake $=! ((lx+dx,ly+dy):(take ((length coords)-1) coords))
+	get snake >>= update
+		where
+			snake = stSnake state
+			removedTail coords = take ((length coords)-1) coords
+			newHead coords dx dy = (lx+dx,ly+dy)
+				where ((lx,ly):_) = coords
+			update coords = snake $=! (newHead coords dx dy : removedTail coords)
 
 dirToCoord :: Dir -> Coord
 dirToCoord DirUp = (0, 1)
